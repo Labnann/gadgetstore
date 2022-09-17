@@ -16,12 +16,19 @@ class Product extends Model
     }
 
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(GeneralUser::class,'user_id');
     }
 
     public function category(){
         return $this->hasOne(Category::class,'name','category');
     }
 
+    public function addedIntoCarts(){
+        return $this->belongsToMany(Cart::class);
+    }
+
+    public function orderMakers(){
+        return $this->belongsToMany(GeneralUser::class);
+    }
 
 }

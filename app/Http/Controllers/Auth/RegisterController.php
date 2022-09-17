@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\Customer;
 use App\Models\Mod;
 use App\Models\Profile;
 use App\Providers\RouteServiceProvider;
-use App\Models\User;
+use App\Models\GeneralUser;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -56,7 +57,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:general_users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -65,21 +66,19 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\Models\User
+     * @return \App\Models\GeneralUser
      */
     protected function create(array $data)
     {
 
 
-        $user = User::create([
+        $user = GeneralUser::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
 
-        $profile = new Profile();
-        $profile->user_id = $user->id;
-        $profile->save();
+        $this->createAssociatedTablesWithUser($user);
 
         return  $user;
     }
@@ -105,7 +104,34 @@ class RegisterController extends Controller
         return redirect()->intended('login/mod');
     }
 
+    /**
+     * @param GeneralUser $user
+     */
+    protected function createAssociatedTablesWithUser(GeneralUser $user): void
+    {
+        $this->createProfile($user);
+        $this->createCart($user);
+    }
 
+    /**
+     * @param GeneralUser $user
+     */
+    protected function createProfile(GeneralUser $user): void
+    {
+        $profile = new Profile();
+        $profile->user_id = $user->id;
+        $profile->save();
+    }
+
+    /**
+     * @param GeneralUser $user
+     */
+    protected function createCart(GeneralUser $user): void
+    {
+        $cart = new Cart();
+        $cart['id'] = $user->id;
+        $cart->save();
+    }
 
 
 }

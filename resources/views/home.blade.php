@@ -17,13 +17,13 @@
 
                 <div class="pt-4 font-weight-bold">Title</div>
                 <div>Description</div>
-                <div> <a href="/profiles/{{$user->id}}/edit">Edit Profile</a></div>
+                <div> <a href="/profiles/{{$user->id}}/edit">Settings</a></div>
             </div>
         </div>
         <div class="row pt-5" >
             @foreach($user->products as $product)
                 <div class="col-4  pb-3">
-                    <a href="/products/{{$product->id}}">
+                    <a href="/products/{{$product->id}}/edit">
                         <img src="/storage/{{$product->image}}" alt="Image" class="w-100" style="max-height: 400px; max-width: 400px">
                     </a>
                     <div><strong>{{$product->name}}</strong></div>
